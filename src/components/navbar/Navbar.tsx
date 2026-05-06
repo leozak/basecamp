@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { clsx } from "clsx";
+import Image from "next/image";
 
 const menuItems = [
   { name: "Home", href: "/" },
@@ -24,7 +25,16 @@ const Navbar = () => {
         <div className="mx-auto flex flex-row items-center justify-between p-2 sm:max-w-xl sm:px-0 md:max-w-2xl lg:max-w-3xl xl:max-w-6xl">
           {/* LOGOTIPO */}
           <div className="font-extrabold">
-            <Link href="/">BASECAMP</Link>
+            <Link href="/" className="flex items-center gap-2">
+              <Image
+                src="/logo.png"
+                alt="Logo"
+                width={20}
+                height={20}
+                className="mb-1 opacity-60"
+              />
+              BASECAMP
+            </Link>
           </div>
 
           {/* DESKTOP MENU */}
@@ -47,7 +57,7 @@ const Navbar = () => {
           <div className="flex flex-row gap-4 md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="opacity-60 hover:opacity-100 cursor-pointer"
+              className="opacity-60 hover:opacity-100 cursor-pointer mr-7"
             >
               <Menu strokeWidth={3} />
             </button>

@@ -1,4 +1,4 @@
-import { Mail, SendHorizonal } from "lucide-react";
+import { SendHorizonal } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -6,18 +6,6 @@ const menuItems = [
   { name: "Home", href: "/" },
   { name: "Loja", href: "/loja" },
   { name: "Sobre", href: "/sobre" },
-];
-
-type ContactItem = {
-  name: string;
-  icon: React.ReactNode;
-  href: string;
-};
-
-const contactItems = [
-  { name: "Email", icon: "Mail", href: "mailto:4Hn4o@example.com" },
-  { name: "Telefone", icon: "phone", href: "tel:+5511999999999" },
-  { name: "Endereço", icon: "map-pin", href: "https://goo.gl/maps/xyz" },
 ];
 
 const Footer = () => {
