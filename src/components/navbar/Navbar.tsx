@@ -18,7 +18,7 @@ const Navbar = () => {
   const currentPath = usePathname();
 
   return (
-    <div className="bg-navbar py-2 text-primary shadow-sm md:py-4">
+    <nav className="bg-navbar py-2 text-primary shadow-sm md:py-4">
       {/* DESKTOP NAVBAR */}
       <div className="block">
         <div className="mx-auto flex flex-row items-center justify-between p-2 sm:max-w-xl sm:px-0 md:max-w-2xl lg:max-w-3xl xl:max-w-6xl">
@@ -49,7 +49,7 @@ const Navbar = () => {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="opacity-60 hover:opacity-100 cursor-pointer"
             >
-              <Menu />
+              <Menu strokeWidth={3} />
             </button>
           </div>
 
@@ -84,7 +84,7 @@ const Navbar = () => {
           ))}
         </div>
       </div>
-    </div>
+    </nav>
   );
 };
 
