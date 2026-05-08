@@ -5,6 +5,8 @@ import type { SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { UserLoginInputs, UserLoginSchema } from "../../types";
+import { useState } from "react";
+import { loginUser } from "@/services/user";
 
 const UserLogin = ({
   setIsSignUp,
@@ -19,8 +21,22 @@ const UserLogin = ({
     resolver: zodResolver(UserLoginSchema),
   });
 
-  const onSubmit: SubmitHandler<UserLoginInputs> = (data) => {
-    console.log(data);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loginError, setLoginError] = useState("");
+
+  const onSubmit: SubmitHandler<UserLoginInputs> = async (
+    data: UserLoginInputs,
+  ) => {
+    setIsLoading(true);
+    try {
+      const result = await loginUser(data);
+      console.log(result);
+    } catch (error) {
+      setLoginError((error as Error).message);
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -33,6 +49,9 @@ const UserLogin = ({
             destino.
           </p>
         </div>
+        {loginError && (
+          <p className="text-xs text-red-500 text-center mb-2">{loginError}</p>
+        )}
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-1">
             <label
@@ -73,7 +92,8 @@ const UserLogin = ({
           <div className="flex flex-col gap-1 mt-6">
             <input
               type="submit"
-              value="Entrar"
+              value={isLoading ? "Enviando..." : "Entrar"}
+              disabled={isLoading}
               className="w-full bg-primary text-white rounded-xl py-1 shadow-md"
             />
           </div>

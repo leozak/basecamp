@@ -5,6 +5,8 @@ import type { SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { UserSiginUpInputs, UserSiginUpSchema } from "../../types";
+import { createUser } from "@/services/user";
+import { useState } from "react";
 
 const UserSigin = ({
   setIsSignUp,
@@ -18,9 +20,20 @@ const UserSigin = ({
   } = useForm<UserSiginUpInputs>({
     resolver: zodResolver(UserSiginUpSchema),
   });
+  const [isLoading, setIsLoading] = useState(false);
 
-  const onSubmit: SubmitHandler<UserSiginUpInputs> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<UserSiginUpInputs> = async (
+    data: UserSiginUpInputs,
+  ) => {
+    setIsLoading(true);
+    try {
+      const result = await createUser(data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+      setIsSignUp(false);
+    }
   };
 
   return (
@@ -228,8 +241,9 @@ const UserSigin = ({
           <div className="flex flex-col gap-1 mt-6">
             <input
               type="submit"
-              value="Enviar"
-              className="w-full bg-primary text-white rounded-xl py-1 shadow-md"
+              value={isLoading ? "Enviando..." : "Enviar"}
+              disabled={isLoading}
+              className="w-full bg-primary disabled:opacity-50 text-white rounded-xl py-1 shadow-md"
             />
           </div>
           <div className="mt-6">
