@@ -68,7 +68,7 @@ const Navbar = () => {
             <Link href="/#" className="opacity-60 hover:opacity-100">
               <ShoppingCart />
             </Link>
-            <Link href="/#" className="opacity-60 hover:opacity-100">
+            <Link href="/users" className="opacity-60 hover:opacity-100">
               <CircleUserRound />
             </Link>
           </div>

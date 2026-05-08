@@ -88,7 +88,7 @@ const Footer = () => {
           </div>
         </div>
       </div>
-      <div className="text-center text-sm text-neutral-200 pt-6">
+      <div className="text-center text-sm text-neutral-200 pt-6 p-2">
         © 2026 BASECAMP. Todos os direitos reservados.
       </div>
     </footer>
