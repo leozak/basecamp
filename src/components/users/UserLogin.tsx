@@ -7,12 +7,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { UserLoginInputs, UserLoginSchema } from "../../types";
 import { useState } from "react";
 import { loginUser } from "@/services/user";
+import Link from "next/link";
 
-const UserLogin = ({
-  setIsSignUp,
-}: {
-  setIsSignUp: (isSignUp: boolean) => void;
-}) => {
+const UserLogin = () => {
   const {
     register,
     handleSubmit,
@@ -29,8 +26,7 @@ const UserLogin = ({
   ) => {
     setIsLoading(true);
     try {
-      const result = await loginUser(data);
-      console.log(result);
+      await loginUser(data);
     } catch (error) {
       setLoginError((error as Error).message);
       console.log(error);
@@ -105,12 +101,9 @@ const UserLogin = ({
           <div className="mt-2">
             <p className="text-xs font-normal text-center">
               Ainda não tem uma conta?{" "}
-              <a
-                className="text-blue-700 cursor-pointer"
-                onClick={() => setIsSignUp(true)}
-              >
+              <Link href="/users/sign" className="text-blue-700 cursor-pointer">
                 Criar uma conta
-              </a>
+              </Link>
               .
             </p>
           </div>

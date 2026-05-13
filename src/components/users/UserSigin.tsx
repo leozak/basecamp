@@ -7,12 +7,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { UserSiginUpInputs, UserSiginUpSchema } from "../../types";
 import { createUser } from "@/services/user";
 import { useState } from "react";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { toast } from "react-toastify";
 
-const UserSigin = ({
-  setIsSignUp,
-}: {
-  setIsSignUp: (isSignUp: boolean) => void;
-}) => {
+const UserSigin = () => {
   const {
     register,
     handleSubmit,
@@ -27,12 +26,13 @@ const UserSigin = ({
   ) => {
     setIsLoading(true);
     try {
-      const result = await createUser(data);
+      await createUser(data);
+      toast.success("Cadastro realizado com sucesso!");
     } catch (error) {
       console.log(error);
     } finally {
       setIsLoading(false);
-      setIsSignUp(false);
+      redirect("/users/login");
     }
   };
 
@@ -249,12 +249,12 @@ const UserSigin = ({
           <div className="mt-6">
             <p className="text-xs font-normal text-center">
               Já possui uma conta?{" "}
-              <a
+              <Link
+                href="/users/login"
                 className="text-blue-700 cursor-pointer"
-                onClick={() => setIsSignUp(false)}
               >
                 Fazer login
-              </a>
+              </Link>
               .
             </p>
           </div>

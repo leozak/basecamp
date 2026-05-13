@@ -2,8 +2,14 @@
 
 import prisma from "../lib/prisma";
 import bcrypt from "bcryptjs";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
-interface User {
+import { signToken } from "@/lib/jwt";
+import { setAuthToken, deleteAuthToken } from "@/lib/auth-actions";
+
+export interface User {
+  id?: string;
   name: string;
   email: string;
   password: string;
@@ -13,6 +19,7 @@ interface User {
   cep: string;
   address: string;
   number: string;
+  admin?: boolean;
   complement?: string;
 }
 
@@ -71,16 +78,127 @@ export async function loginUser(user: Pick<User, "email" | "password">) {
     throw new Error("Usuário ou senha incorretos");
   }
 
-  console.log(existingUser);
+  const token = await signToken({
+    userId: existingUser.id,
+    email: existingUser.email,
+    admin: existingUser.admin,
+  });
 
-  return { success: true, message: "Bem-vindo de volta à trilha!" };
+  await setAuthToken(token);
+
+  revalidatePath("/", "layout");
+
+  if (existingUser.admin) {
+    redirect("/dashboard");
+  } else {
+    redirect(`/users/${existingUser.id}`);
+  }
 }
 
-// Compara a senha digitada com o Hash do banco
-// const senhasConferem = await bcrypt.compare(plainPassword, hashSalvoNoBanco);
-//
-// Dica de segurança: Não diga se foi o e-mail ou a senha que errou,
-// diga apenas "Credenciais inválidas" para evitar vazamento de contas.
-// if (!senhasConferem) {
-//    throw new Error('E-mail ou senha incorretos. Você pegou a trilha errada.');
-// }
+export async function logoutUser() {
+  await deleteAuthToken();
+  revalidatePath("/", "layout");
+  redirect("/");
+}
+
+export async function getUsers() {
+  const users: Omit<User, "password">[] = await prisma.user.findMany({
+    orderBy: {
+      name: "asc",
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      admin: true,
+      phone: true,
+      city: true,
+      state: true,
+      cep: true,
+      address: true,
+      number: true,
+      complement: true,
+      createdAt: true,
+    },
+  });
+  return users;
+}
+
+export async function editUser(userId: string, user: User) {
+  let updateUser;
+  if (user.password.length > 0) {
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(user.password, saltRounds);
+    user.password = hashedPassword;
+
+    updateUser = await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        name: user.name,
+        email: user.email,
+        admin: user.admin,
+        phone: user.phone,
+        city: user.city,
+        state: user.state,
+        cep: user.cep,
+        address: user.address,
+        number: user.number,
+        complement: user.complement,
+        password: user.password,
+      },
+    });
+  } else {
+    updateUser = await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        name: user.name,
+        email: user.email,
+        admin: user.admin,
+        phone: user.phone,
+        city: user.city,
+        state: user.state,
+        cep: user.cep,
+        address: user.address,
+        number: user.number,
+        complement: user.complement,
+      },
+    });
+  }
+
+  return updateUser;
+}
+
+export async function newUser(user: User) {
+  const existingUser = await prisma.user.findUnique({
+    where: {
+      email: user.email,
+    },
+  });
+
+  if (existingUser) {
+    throw new Error("Usuário já cadastrado");
+  }
+
+  const saltRounds = 10;
+  const hashedPassword = await bcrypt.hash(user.password, saltRounds);
+
+  return prisma.user.create({
+    data: {
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      city: user.city,
+      state: user.state,
+      cep: user.cep,
+      address: user.address,
+      number: user.number,
+      complement: user.complement ? user.complement : "",
+      admin: user.admin,
+      password: hashedPassword,
+    },
+  });
+}

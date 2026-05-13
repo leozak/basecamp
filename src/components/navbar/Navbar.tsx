@@ -1,10 +1,10 @@
 "use client";
 
-import { CircleUserRound, Menu, ShoppingCart } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { clsx } from "clsx";
+import { CircleUserRound, Menu, ShoppingCart } from "lucide-react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 import Image from "next/image";
 
 const menuItems = [
